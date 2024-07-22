@@ -1,0 +1,80 @@
+R version 4.4.1 (2024-06-14) -- "Race for Your Life"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin20
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[R.app GUI 1.80 (8416) x86_64-apple-darwin20]
+
+[History restored from /Users/elizafo/.Rapp.history]
+
+> setwd("/Users/elizafo/Desktop/")
+> MouseAllData <- read.delim("MouseRetina_AllGenes_PeaksPerGene.txt", stringsAsFactors=FALSE, check.names=FALSE)
+> MouseAllValues <- as.vector(MouseAllData[,2])
+> length(MouseAllValues)
+[1] 20500
+> max(MouseAllValues)
+[1] 145
+> MouseAllTabs = data.frame()
+> for (i in 1:1000) {
++ s1 = sample(MouseAllValues, 20500, replace = T)
++ output = tabulate(s1, nbins = 145)
++ MouseAllTabs = rbind(MouseAllTabs, output)
++ }
+> seq <- c(seq(1:145))
+> colnames(MouseAllTabs) <- seq
+> write.table(MouseAllTabs, file = "MouseRetina_AllGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+> MouseAllTabs = data.frame()
+> set.seed(1)
+> for (i in 1:1000) {
++ s1 = sample(MouseAllValues, 20500, replace = T)
++ output = tabulate(s1, nbins = 145)
++ MouseAllTabs = rbind(MouseAllTabs, output)
++ }
+> colnames(MouseAllTabs) <- seq
+> write.table(MouseAllTabs, file = "MouseRetina_AllGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+> MouseCCData <- read.delim("MouseRetina_CellCycleGenes_PeaksPerGene.txt", stringsAsFactors=FALSE, check.names=FALSE)
+> MouseCCValues <- as.vector(MouseCCData[,2])
+> length(MouseCCValues)
+[1] 577
+> max(MouseCCValues)
+[1] 69
+> MouseCCTabs = data.frame()
+> set.seed(1)
+> for (i in 1:1000) {
++ s1 = sample(MouseCCValues, 577, replace = T)
++ output = tabulate(s1, nbins = 69)
++ MouseCCTabs = rbind(MouseCCTabs, output)
++ }
+> seq <- c(seq(1:69))
+> colnames(MouseCCTabs) <- seq
+> write.table(MouseCCTabs, file = "MouseRetina_CellCycleGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+> MouseDecCCData <- read.delim("MouseRetina_DecreasingCellCycleGenes_PeaksPerGene.txt", stringsAsFactors=FALSE, check.names=FALSE)
+> MouseDecCCValues <- as.vector(MouseDecCCData[,2])
+> length(MouseDecCCValues)
+[1] 228
+> max(MouseDecCCValues)
+[1] 56
+> MouseDecCCTabs = data.frame()
+> set.seed(1)
+> for (i in 1:1000) {
++ s1 = sample(MouseDecCCValues, 228, replace = T)
++ output = tabulate(s1, nbins = 56)
++ MouseDecCCTabs = rbind(MouseDecCCTabs, output)
++ }
+> seq <- c(seq(1:56))
+> colnames(MouseDecCCTabs) <- seq
+> write.table(MouseDecCCTabs, file = "MouseRetina_DecreasingCellCycleGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+>

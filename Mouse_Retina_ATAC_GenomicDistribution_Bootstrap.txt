@@ -1,0 +1,68 @@
+# The application(s) to execute along with its input arguments and options:
+
+# load R module and install packages before running job in interactive node
+# module load Bioinformatics
+# module load R (default version 4.4.0)
+# Run R by entering command: "R" which will start an R prompt in the command window
+# From ARC page: The first time you install a package, you will be asked if you want to install it to a personal library, and you do, so say ‘yes’. It will also offer to create one at ~/R/x86_64-pc-linux-gnu-library followed by the first two digits of the R version. Use that unless you know what you are doing.
+# if (!require("BiocManager", quietly = TRUE))
+#	install.packages("BiocManager")
+# BiocManager::install("ChIPpeakAnno")
+# BiocManager::install("TxDb.Mmusculus.UCSC.mm10.knownGene")
+
+#To get the job done faster, can open multiple interactive jobs and run 5x200 replications simultaneously. set.seed(X) was set for the five terminals at X values 1-5 and the output files were written with matching numbers on the end.
+
+#apply for interactive job resources
+salloc --account=buttitta0 --nodes=1 --mem-per-cpu=1G --cpus-per-task=8 --time=03:00:00
+
+R
+setwd("/scratch/buttitta_root/buttitta/elizafo/Mouse_Retina_ATAC/GenomicDistributions/")
+library(ChIPpeakAnno)
+library(TxDb.Mmusculus.UCSC.mm10.knownGene)
+genome <- TxDb.Mmusculus.UCSC.mm10.knownGene
+annoData <- toGRanges(genome, feature="gene")
+
+All <- "Mouse_Retina_ATAC_NFR_Postnatal_MACS2peaks_merge.bed"
+AllPeaks <- toGRanges(All, format="BED", header=FALSE)
+AllPeaks
+RetinaAllTrials = data.frame()
+set.seed(1)
+pb <- txtProgressBar(min=0, max=200, style=3)
+for (i in 1:200) {
+	s1 = sample(AllPeaks, 141257, replace=T)
+	output = assignChromosomeRegion(s1, precedence=c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns"), TxDb=TxDb.Mmusculus.UCSC.mm10.knownGene)
+	RetinaAllTrials = rbind(RetinaAllTrials, output$percentage)
+	setTxtProgressBar(pb, i)
+}
+colnames(RetinaAllTrials) <- c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns", "Intergenic.Region")
+write.table(RetinaAllTrials, file="MouseRetina_AllPeaks_GenomicDistribution_Bootstrap200Reps_1.txt", quote=FALSE)
+
+CC <- "Mouse_Retina_ATAC_Peaks_NearestGene_CellCycle.bed"
+CCPeaks <- toGRanges(CC, format="BED", header=FALSE)
+CCPeaks
+RetinaCCTrials = data.frame()
+set.seed(1)
+pb <- txtProgressBar(min=0, max=200, style=3)
+for (i in 1:200) {
+	s1 = sample(CCPeaks, 3326, replace=T)
+	output = assignChromosomeRegion(s1, precedence=c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns"), TxDb=TxDb.Mmusculus.UCSC.mm10.knownGene)
+	RetinaCCTrials = rbind(RetinaCCTrials, output$percentage)
+	setTxtProgressBar(pb, i)
+}
+colnames(RetinaCCTrials) <- c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns", "Intergenic.Region")
+write.table(RetinaCCTrials, file="MouseRetina_CellCyclePeaks_GenomicDistribution_Bootstrap200Reps_1.txt", quote=FALSE)
+
+CCDown <- "Mouse_Retina_ATAC_PostnatalPeaks_NearestGene_DecreasingEveryTimePointCellCycle_4col.bed"
+CCDownPeaks <- toGRanges(CCDown, format="BED", header=FALSE)
+CCDownPeaks
+RetinaCCDownTrials = data.frame()
+set.seed(1)
+pb <- txtProgressBar(min=0, max=200, style=3)
+for (i in 1:200) {
+	s1 = sample(CCDownPeaks, 1116, replace=T)
+	output = assignChromosomeRegion(s1, precedence=c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns"), TxDb=TxDb.Mmusculus.UCSC.mm10.knownGene)
+	RetinaCCDownTrials = rbind(RetinaCCDownTrials, output$percentage)
+	setTxtProgressBar(pb, i)
+}
+colnames(RetinaCCDownTrials) <- c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns", "Intergenic.Region")
+write.table(RetinaCCDownTrials, file="MouseRetina_CellCycleDecreasingEveryTimepointPeaks_GenomicDistribution_Bootstrap200Reps_1.txt", quote=FALSE)

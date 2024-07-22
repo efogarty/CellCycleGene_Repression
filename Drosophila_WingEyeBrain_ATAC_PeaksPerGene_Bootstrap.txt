@@ -1,0 +1,127 @@
+R version 4.3.3 (2024-02-29) -- "Angel Food Cake"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin20 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+2024-06-21 08:46:13.270 R[8936:44996] WARNING: Secure coding is not enabled for restorable state! Enable secure coding by implementing NSApplicationDelegate.applicationSupportsSecureRestorableState: and returning YES.
+[R.app GUI 1.80 (8340) x86_64-apple-darwin20]
+
+[History restored from /Users/elizafo/.Rapp.history]
+
+> setwd("/Users/elizafo/Desktop/")
+> WingAllData <- read.delim("Wing_AllGenes_PeaksPerGene.txt", stringsAsFactors=FALSE, check.names=FALSE)
+> WingAllValues <- as.vector(WingAllData[,2])
+> length(WingAllValues)
+[1] 8677
+> WingAllTabs = data.frame()
+> for (i in 1:1000) {
++ s1 = sample(WingAllValues, 8677, replace = T)
++ output = tabulate(s1, nbins = 97)
++ WingAllTabs = rbind(WingAllTabs, output)
++ }
+> seq <- c(seq(1:97))
+> colnames(WingAllTabs) <- seq
+> write.table(WingAllTabs, file = "Wing_AllGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+> set.seed(1)
+> WingAllTabs = data.frame()
+> for (i in 1:1000) {
++ s1 = sample(WingAllValues, 8677, replace = T)
++ output = tabulate(s1, nbins = 97)
++ WingAllTabs = rbind(WingAllTabs, output)
++ }
+> colnames(WingAllTabs) <- seq
+> write.table(WingAllTabs, file = "Wing_AllGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+> EyeAllData <- read.delim("Eye_AllGenes_PeaksPerGene.txt", stringsAsFactors=FALSE, check.names=FALSE)
+> EyeAllValues <- as.vector(EyeAllData[,2])
+> length(EyeAllValues)
+[1] 9065
+> max(EyeAllValues)
+[1] 49
+> EyeAllTabs = data.frame()
+> set.seed(1)
+> for (i in 1:1000) {
++ s1 = sample(EyeAllValues, 9065, replace = T)
++ output = tabulate(s1, nbins = 49)
++ EyeAllTabs = rbind(EyeAllTabs, output)
++ }
+> seq <- c(seq(1:49))
+> colnames(EyeAllTabs) <- seq
+> write.table(EyeAllTabs, file = "Eye_AllGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+> BrainAllData <- read.delim("Brain_AllGenes_PeaksPerGene.txt", stringsAsFactors=FALSE, check.names=FALSE)
+> BrainAllValues <- as.vector(BrainAllData[,2])
+> length(BrainAllValues)
+[1] 9635
+> max(BrainAllValues)
+[1] 44
+> BrainAllTabs = data.frame()
+> set.seed(1)
+> for (i in 1:1000) {
++ s1 = sample(BrainAllValues, 9635, replace = T)
++ output = tabulate(s1, nbins = 44)
++ BrainAllTabs = rbind(BrainAllTabs, output)
++ }
+> seq <- c(seq(1:44))
+> colnames(BrainAllTabs) <- seq
+> write.table(BrainAllTabs, file = "Brain_AllGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+> WingCCData <- read.delim("Wing_CellCycleGenes_PeaksPerGene.txt", stringsAsFactors=FALSE, check.names=FALSE)
+> WingCCValues <- as.vector(WingCCData[,2])
+> length(WingCCValues)
+[1] 147
+> max(WingCCValues)
+[1] 16
+> WingCCTabs = data.frame()
+> set.seed(1)
+> for (i in 1:1000) {
++ s1 = sample(WingCCValues, 147, replace = T)
++ output = tabulate(s1, nbins = 16)
++ WingCCTabs = rbind(WingCCTabs, output)
++ }
+> seq <- c(seq(1:16))
+> colnames(WingCCTabs) <- seq
+> write.table(WingCCTabs, file = "Wing_CellCycleGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+> EyeCCData <- read.delim("Eye_CellCycleGenes_PeaksPerGene.txt", stringsAsFactors=FALSE, check.names=FALSE)
+> EyeCCValues <- as.vector(EyeCCData[,2])
+> length(EyeCCValues)
+[1] 146
+> max(EyeCCValues)
+[1] 17
+> EyeCCTabs = data.frame()
+> set.seed(1)
+> for (i in 1:1000) {
++ s1 = sample(EyeCCValues, 146, replace = T)
++ output = tabulate(s1, nbins = 17)
++ EyeCCTabs = rbind(EyeCCTabs, output)
++ }
+> seq <- c(seq(1:17))
+> colnames(EyeCCTabs) <- seq
+> write.table(EyeCCTabs, file = "Eye_CellCycleGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+> BrainCCData <- read.delim("Brain_CellCycleGenes_PeaksPerGene.txt", stringsAsFactors=FALSE, check.names=FALSE)
+> BrainCCValues <- as.vector(BrainCCData[,2])
+> length(BrainCCValues)
+[1] 186
+> max(BrainCCValues)
+[1] 13
+> BrainCCTabs = data.frame()
+> set.seed(1)
+> for (i in 1:1000) {
++ s1 = sample(BrainCCValues, 186, replace = T)
++ output = tabulate(s1, nbins = 13)
++ BrainCCTabs = rbind(BrainCCTabs, output)
++ }
+> seq <- c(seq(1:13))
+> colnames(BrainCCTabs) <- seq
+> write.table(BrainCCTabs, file = "Brain_CellCycleGenes_PeaksPerGene_Bootstrapping_1000Reps.txt", quote=FALSE)
+>

@@ -1,0 +1,113 @@
+# The application(s) to execute along with its input arguments and options:
+
+# load R module and install packages before running job in interactive node
+# module load Bioinformatics
+# module load R (default version 4.4.0)
+# Run R by entering command: "R" which will start an R prompt in the command window
+# From ARC page: The first time you install a package, you will be asked if you want to install it to a personal library, and you do, so say ‘yes’. It will also offer to create one at ~/R/x86_64-pc-linux-gnu-library followed by the first two digits of the R version. Use that unless you know what you are doing.
+# if (!require("BiocManager", quietly = TRUE))
+#	install.packages("BiocManager")
+# BiocManager::install("ChIPpeakAnno")
+# BiocManager::install("TxDb.Dmelanogaster.UCSC.dm6.ensGene")
+
+#To get the job done faster, can open multiple interactive jobs and run 5x200 replications simultaneously. set.seed(X) was set for the five terminals at X values 1-5 and the output files were written with matching numbers on the end.
+
+#apply for interactive job resources
+salloc --account=buttitta0 --nodes=1 --mem-per-cpu=1G --cpus-per-task=8 --time=04:00:00
+
+R
+setwd("/scratch/buttitta_root/buttitta/elizafo/CrossTissue_ATAC/GenomicDistributions/")
+library(ChIPpeakAnno)
+library(TxDb.Dmelanogaster.UCSC.dm6.ensGene)
+genome <- TxDb.Dmelanogaster.UCSC.dm6.ensGene
+annoData <- toGRanges(genome, feature="gene")
+
+Wing_CC <- "Wing_ATAC_NFR_20percent_MACS2peaks_merge_BlacklistLINELTRSubtract_NearestGeneID_CellCycle.bed"
+Wing_CC_Peaks <- toGRanges(Wing_CC, format="BED", header=FALSE)
+Wing_CC_Peaks
+WingCCTrials = data.frame()
+set.seed(1)
+pb <- txtProgressBar(min=0, max=200, style=3)
+for (i in 1:200) {
+	s1 = sample(Wing_CC_Peaks, 285, replace=T)
+	output = assignChromosomeRegion(s1, precedence=c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns"), TxDb=TxDb.Dmelanogaster.UCSC.dm6.ensGene)
+	WingCCTrials = rbind(WingCCTrials, output$percentage)
+	setTxtProgressBar(pb, i)
+}
+colnames(WingCCTrials) <- c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns", "Intergenic.Region")
+write.table(WingCCTrials, file="Wing_CellCyclePeaks_GenomicDistribution_Bootstrap100Reps.txt", quote=FALSE)
+
+Eye_CC <- "Eye_ATAC_NFR_20percent_MACS2peaks_merge_BlacklistLINELTRSubtract_NearestGeneID_CellCycle.bed"
+Eye_CC_Peaks <- toGRanges(Eye_CC, format="BED", header=FALSE)
+Eye_CC_Peaks
+EyeCCTrials = data.frame()
+set.seed(1)
+pb <- txtProgressBar(min=0, max=200, style=3)
+for (i in 1:200) {
+	s1 = sample(Eye_CC_Peaks, 293, replace=T)
+	output = assignChromosomeRegion(s1, precedence=c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns"), TxDb=TxDb.Dmelanogaster.UCSC.dm6.ensGene)
+	EyeCCTrials = rbind(EyeCCTrials, output$percentage)
+	setTxtProgressBar(pb, i)
+}
+colnames(EyeCCTrials) <- c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns", "Intergenic.Region")
+write.table(EyeCCTrials, file="Eye_CellCyclePeaks_GenomicDistribution_Bootstrap200Reps_1.txt", quote=FALSE)
+
+Brain_CC <- "Brain_ATAC_NFR_5percent_MACS2peaks_merge_BlacklistLINELTRSubtract_NearestGeneID_CellCycle.bed"
+Brain_CC_Peaks <- toGRanges(Brain_CC, format="BED", header=FALSE)
+Brain_CC_Peaks
+BrainCCTrials = data.frame()
+set.seed(1)
+pb <- txtProgressBar(min=0, max=200, style=3)
+for (i in 1:200) {
+	s1 = sample(Brain_CC_Peaks, 351, replace=T)
+	output = assignChromosomeRegion(s1, precedence=c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns"), TxDb=TxDb.Dmelanogaster.UCSC.dm6.ensGene)
+	BrainCCTrials = rbind(BrainCCTrials, output$percentage)
+	setTxtProgressBar(pb, i)
+}
+colnames(BrainCCTrials) <- c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns", "Intergenic.Region")
+write.table(BrainCCTrials, file="Brain_CellCyclePeaks_GenomicDistribution_Bootstrap200Reps_1.txt", quote=FALSE)
+
+Wing_All <- "Wing_ATAC_NFR_20percent_MACS2peaks_merge_BlacklistLINELTRSubtract.bed"
+Wing_All_Peaks <- toGRanges(Wing_All, format="BED", header=FALSE)
+Wing_All_Peaks
+WingAllTrials = data.frame()
+set.seed(1)
+pb <- txtProgressBar(min=0, max=200, style=3)
+for (i in 1:200) {
+	s1 = sample(Wing_All_Peaks, 21061, replace=T)
+	output = assignChromosomeRegion(s1, precedence=c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns"), TxDb=TxDb.Dmelanogaster.UCSC.dm6.ensGene)
+	WingAllTrials = rbind(WingAllTrials, output$percentage)
+	setTxtProgressBar(pb, i)
+}
+colnames(WingAllTrials) <- c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns", "Intergenic.Region")
+write.table(WingAllTrials, file="Wing_AllPeaks_GenomicDistribution_Bootstrap200Reps_1.txt", quote=FALSE)
+
+Eye_All <- "Eye_ATAC_NFR_20percent_MACS2peaks_merge_BlacklistLINELTRSubtract.bed"
+Eye_All_Peaks <- toGRanges(Eye_All, format="BED", header=FALSE)
+Eye_All_Peaks
+EyeAllTrials = data.frame()
+set.seed(1)
+pb <- txtProgressBar(min=0, max=200, style=3)
+for (i in 1:200) {
+	s1 = sample(Eye_All_Peaks, 23189, replace=T)
+	output = assignChromosomeRegion(s1, precedence=c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns"), TxDb=TxDb.Dmelanogaster.UCSC.dm6.ensGene)
+	EyeAllTrials = rbind(EyeAllTrials, output$percentage)
+	setTxtProgressBar(pb, i)
+}
+colnames(EyeAllTrials) <- c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns", "Intergenic.Region")
+write.table(EyeAllTrials, file="Eye_AllPeaks_GenomicDistribution_Bootstrap200Reps_1.txt", quote=FALSE)
+
+Brain_All <- "Brain_ATAC_NFR_5percent_MACS2peaks_merge_BlacklistLINELTRSubtract.bed"
+Brain_All_Peaks <- toGRanges(Brain_All, format="BED", header=FALSE)
+Brain_All_Peaks
+BrainAllTrials = data.frame()
+set.seed(1)
+pb <- txtProgressBar(min=0, max=200, style=3)
+for (i in 1:200) {
+	s1 = sample(Brain_All_Peaks, 28478, replace=T)
+	output = assignChromosomeRegion(s1, precedence=c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns"), TxDb=TxDb.Dmelanogaster.UCSC.dm6.ensGene)
+	BrainAllTrials = rbind(BrainAllTrials, output$percentage)
+	setTxtProgressBar(pb, i)
+}
+colnames(BrainAllTrials) <- c("Promoters", "immediateDownstream", "fiveUTRs", "threeUTRs", "Exons", "Introns", "Intergenic.Region")
+write.table(BrainAllTrials, file="Brain_AllPeaks_GenomicDistribution_Bootstrap200Reps_1.txt", quote=FALSE)
